@@ -1,6 +1,6 @@
-from src.errors import UnregisteredService, ServiceNotFound
-from src.utils import get_constructor_arguments
-from src.singleton import SingletonMeta
+from ..errors import UnregisteredService, ServiceNotFound
+from ..utils import get_constructor_arguments
+from ..singleton import SingletonMeta
 from .registry import Registry
 from typing import Dict, Type, TypeVar
 

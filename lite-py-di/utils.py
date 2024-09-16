@@ -1,4 +1,4 @@
-from src.errors import UnspecifiedType
+from .errors import UnspecifiedType
 from typing import Type
 import inspect
 

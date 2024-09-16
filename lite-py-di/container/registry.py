@@ -1,5 +1,5 @@
-from src.errors import ServiceNotFound, ServiceAlreadyRegistered
-from src.dependency.dependency_config import DependencyConfig
+from ..errors import ServiceNotFound, ServiceAlreadyRegistered
+from ..dependency.dependency_config import DependencyConfig
 from typing import Dict, Type, TypeVar
 
 ServiceType = TypeVar('ServiceType')
