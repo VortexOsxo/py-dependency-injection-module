@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
 @dataclass
-class ServiceConfig:
+class RegisterConfig:
     class_type: type
     is_singleton: bool
