@@ -1,6 +1,6 @@
-from ..container.container import Container
+from .._container.container import Container
 
-def dependency(is_singleton=True):
+def service(is_singleton=True):
     """Decorator for registering a class as a dependency in the Container.
     Args:
         is_singleton (bool, optional): Indicates whether the dependency should be a singleton.
