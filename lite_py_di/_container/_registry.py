@@ -1,8 +1,9 @@
 from ..errors import ServiceNotFound, ServiceAlreadyRegistered
 from ..config import _RegisterConfig
 from typing import Dict, Type, TypeVar
+from ..factories import SingletonFactory, TransiantFactory
 
-ServiceType = TypeVar('ServiceType')
+ServiceType = TypeVar('ServiceType', bound=Type)
 
 class _Registry:
     def __init__(self):
@@ -14,7 +15,11 @@ class _Registry:
 
         self._dependencies_config[class_name] = register_config
 
-    def get_class_type(self, class_name) -> Type[ServiceType]:
+        if register_config.is_singleton:
+            return SingletonFactory(register_config.class_type)
+        return TransiantFactory(register_config.class_type)
+
+    def get_class_type(self, class_name: str) -> Type[ServiceType]:
         if not class_name in self._dependencies_config: raise ServiceNotFound(class_name)
         return self._dependencies_config[class_name].class_type
 
