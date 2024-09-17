@@ -2,6 +2,7 @@ from ..errors import UnregisteredService, ServiceNotFound
 from .._init_utils import _get_init_arguments
 from .._singleton import SingletonMeta
 from ._registry import _Registry
+from ..config import ServiceConfig, _RegisterConfig
 from typing import Dict, Type, TypeVar
 
 ServiceType = TypeVar('ServiceType')
@@ -12,13 +13,14 @@ class Container(metaclass = SingletonMeta):
         self._registry = _Registry()
         self._instances: Dict[str, object] = {}
 
-    def register(self, class_type: Type, is_singleton: bool):
+    def register(self, class_type: Type, service_config: ServiceConfig):
         """Register a service with the Container.
         Args:
             class_type (type): The type of the service class.
             is_singleton (bool): Indicates if the service is a singleton.
         """
-        self._registry.register(class_type, is_singleton)
+        register_config = _RegisterConfig(service_config.is_singleton, class_type)
+        self._registry.register(register_config)
 
     def get(self, class_type: Type[ServiceType]) -> ServiceType:
         """Get an instance of a registered service.

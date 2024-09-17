@@ -1,5 +1,5 @@
 from ..errors import ServiceNotFound, ServiceAlreadyRegistered
-from ._register_config import _RegisterConfig
+from ..config import _RegisterConfig
 from typing import Dict, Type, TypeVar
 
 ServiceType = TypeVar('ServiceType')
@@ -8,11 +8,11 @@ class _Registry:
     def __init__(self):
         self._dependencies_config: Dict[str, _RegisterConfig] = {}
 
-    def register(self, class_type: Type, is_singleton: bool) -> None:
-        class_name = class_type.__name__
-        if class_name in self._dependencies_config: raise ServiceAlreadyRegistered(class_type)
+    def register(self, register_config: _RegisterConfig) -> None:
+        class_name = register_config.class_type.__name__
+        if class_name in self._dependencies_config: raise ServiceAlreadyRegistered(register_config.class_type)
 
-        self._dependencies_config[class_name] = _RegisterConfig(class_type, is_singleton)
+        self._dependencies_config[class_name] = register_config
 
     def get_class_type(self, class_name) -> Type:
         if not class_name in self._dependencies_config: raise ServiceNotFound(class_name)
