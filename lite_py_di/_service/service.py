@@ -4,8 +4,7 @@ from ..config import ServiceConfig
 def service(service_config: ServiceConfig | None = None):
     """Decorator for registering a class as a dependency in the Container.
     Args:
-        is_singleton (bool, optional): Indicates whether the dependency should be a singleton.
-            Defaults to True.
+        service_config (ServiceConfig | None, optional): Configuration for the service.
     """
 
     if service_config is None:

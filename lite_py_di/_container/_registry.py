@@ -14,7 +14,7 @@ class _Registry:
 
         self._dependencies_config[class_name] = register_config
 
-    def get_class_type(self, class_name) -> Type:
+    def get_class_type(self, class_name) -> Type[ServiceType]:
         if not class_name in self._dependencies_config: raise ServiceNotFound(class_name)
         return self._dependencies_config[class_name].class_type
 
