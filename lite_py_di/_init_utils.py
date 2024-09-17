@@ -2,11 +2,11 @@ from .errors import UnspecifiedType
 from typing import Type
 import inspect
 
-def has_init_method(cls: Type) -> bool:
+def _has_init_method(cls: Type) -> bool:
     return hasattr(cls, '__init__') and inspect.isfunction(cls.__init__)
 
-def get_constructor_arguments(cls: Type):
-    if not has_init_method(cls): return []
+def _get_init_arguments(cls: Type):
+    if not _has_init_method(cls): return []
     
     init_args = cls.__init__.__code__.co_varnames[1:]
     init_annotations = cls.__init__.__annotations__

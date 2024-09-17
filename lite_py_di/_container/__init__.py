@@ -1,2 +1,2 @@
 from .container import Container
-from .registry import Registry
+from ._registry import _Registry

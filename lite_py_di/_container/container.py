@@ -1,7 +1,7 @@
 from ..errors import UnregisteredService, ServiceNotFound
-from ..utils import get_constructor_arguments
-from ..singleton import SingletonMeta
-from .registry import Registry
+from .._init_utils import _get_init_arguments
+from .._singleton import SingletonMeta
+from ._registry import _Registry
 from typing import Dict, Type, TypeVar
 
 ServiceType = TypeVar('ServiceType')
@@ -9,7 +9,7 @@ ServiceType = TypeVar('ServiceType')
 class Container(metaclass = SingletonMeta):
     """A container for managing service registration and retrieval."""
     def __init__(self):
-        self.registry = Registry()
+        self._registry = _Registry()
         self._instances: Dict[str, object] = {}
 
     def register(self, class_type: Type, is_singleton: bool):
@@ -18,7 +18,7 @@ class Container(metaclass = SingletonMeta):
             class_type (type): The type of the service class.
             is_singleton (bool): Indicates if the service is a singleton.
         """
-        self.registry.register(class_type, is_singleton)
+        self._registry.register(class_type, is_singleton)
 
     def get(self, class_type: Type[ServiceType]) -> ServiceType:
         """Get an instance of a registered service.
@@ -27,7 +27,7 @@ class Container(metaclass = SingletonMeta):
         Returns:
             ServiceType: An instance of the service class.
         """
-        if not self.registry.is_registered(class_type.__name__): raise UnregisteredService(class_type)
+        if not self._registry.is_registered(class_type.__name__): raise UnregisteredService(class_type)
         return self._get_service_intern(class_type)
 
     def get_by_name(self, class_name: str) -> object:
@@ -37,13 +37,13 @@ class Container(metaclass = SingletonMeta):
         Returns:
             object: An instance of the service class.
         """
-        if not self.registry.is_registered(class_name): raise ServiceNotFound(class_name)
+        if not self._registry.is_registered(class_name): raise ServiceNotFound(class_name)
 
-        class_type = self.registry.get_class_type(class_name)
+        class_type = self._registry.get_class_type(class_name)
         return self._get_service_intern(class_type)
 
     def _get_service_intern(self, class_type: Type[ServiceType]) -> ServiceType:
-        if self.registry._is_singleton(class_type):
+        if self._registry._is_singleton(class_type):
             return self._instances[class_type] if class_type in self._instances else self._create_and_save_service(class_type)
         return self._create_service(class_type)
 
@@ -53,6 +53,6 @@ class Container(metaclass = SingletonMeta):
         return service
 
     def _create_service(self, class_type: Type[ServiceType]) -> ServiceType:
-        constructor_args = get_constructor_arguments(class_type)
+        constructor_args = _get_init_arguments(class_type)
         args = [self.get(arg) for arg in constructor_args]
         return class_type(*args)
