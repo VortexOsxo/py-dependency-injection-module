@@ -3,14 +3,14 @@ from .._singleton import SingletonMeta
 from ._registry import _Registry
 from ..config import ServiceConfig, _RegisterConfig
 from typing import Dict, Type, TypeVar
-from ..factories import AbstractFactory
+from ..factories import _AbstractFactory
 
 ServiceType = TypeVar('ServiceType')
 
 class Container(metaclass = SingletonMeta):
     """A container for managing service registration and retrieval."""
     _registry = _Registry()
-    _factories: Dict[Type[ServiceType], AbstractFactory] = {}
+    _factories: Dict[Type[ServiceType], _AbstractFactory] = {}
 
     @classmethod
     def register(cls, class_type: Type[ServiceType], service_config: ServiceConfig):
@@ -20,10 +20,11 @@ class Container(metaclass = SingletonMeta):
             class_type (type): The type of the service class.
             service_config (ServiceConfig): Configuration for the service.
         """
-        register_config = _RegisterConfig(service_config.is_singleton, class_type)
+        register_config = _RegisterConfig(service_config.is_singleton, service_config.is_loaded_eagerly, class_type)
 
         factory = cls._registry.register(register_config)
         cls._factories[class_type] = factory
+        factory.on_registration(cls)
 
     @classmethod
     def get(cls, class_type: Type[ServiceType]) -> ServiceType:

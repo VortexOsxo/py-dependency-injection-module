@@ -1,3 +1,3 @@
-from .abstract_factory import AbstractFactory
-from .transiant_factory import TransiantFactory
+from ._abstract_factory import _AbstractFactory
+from .transient_factory import TransientFactory
 from .singleton_factory import SingletonFactory

@@ -12,4 +12,9 @@ class ServiceNotFound(Exception):
 
 class ServiceAlreadyRegistered(Exception):
     def __init__(self, class_type: type):
-                super().__init__(f"{class_type.__name__} was already registered")
+        super().__init__(f"{class_type.__name__} was already registered")
+
+class InvalidServiceConfiguration(Exception):
+    def __init__(self, error: str):
+        super().__init__(f"Invalid service config: {error}")
+    
