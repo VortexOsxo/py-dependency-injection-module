@@ -3,3 +3,7 @@ main.py
 dist/
 lite_py_di.egg-info/
 build/
+
+# tests
+htmlcov/
+.coverage
