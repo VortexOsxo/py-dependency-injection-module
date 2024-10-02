@@ -1,11 +1,9 @@
 import pytest
 from lite_py_di import Container, service
-from lite_py_di._container._registry import _Registry
 
 @pytest.fixture(autouse=True)
 def reset_container():
-    Container._registry = _Registry()
-    Container._factories = {}
+    Container.reset()
     yield
 
 def test_basic_registration():

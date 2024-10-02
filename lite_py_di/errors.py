@@ -17,4 +17,8 @@ class ServiceAlreadyRegistered(Exception):
 class InvalidServiceConfiguration(Exception):
     def __init__(self, error: str):
         super().__init__(f"Invalid service config: {error}")
+
+class InvalidLookUpValue(Exception):
+    def __init__(self, correct_value: str, wrong_value: str):
+        super().__init__(f"Invalid look up value, got {wrong_value}, but it must be {correct_value}")
     

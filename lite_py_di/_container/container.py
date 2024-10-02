@@ -48,6 +48,15 @@ class Container(metaclass = SingletonMeta):
 
         class_type = cls._registry.get_class_type(class_name)
         return cls._get_service_intern(class_type)
+    
+    @classmethod
+    def reset(cls) -> None:
+        """ Clear all the services and instances registered in the Container
+        Usage:
+            Container.reset()
+        """
+        cls._registry = _Registry()
+        cls._factories = {}
 
     @classmethod
     def _get_service_intern(cls, class_type: Type[ServiceType]) -> ServiceType:
@@ -55,4 +64,3 @@ class Container(metaclass = SingletonMeta):
         
         if not class_type in cls._factories: raise UnregisteredService(class_type)
         return cls._factories[class_type].get_service(cls)
-
