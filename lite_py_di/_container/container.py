@@ -27,23 +27,25 @@ class Container(metaclass = SingletonMeta):
         factory.on_registration(cls)
 
     @classmethod
-    def get(cls, class_type: Type[ServiceType]) -> ServiceType:
+    def get(cls, lookup_value: Type[ServiceType] | str) -> ServiceType:
         """Get an instance of a registered service.
         Args:
-            class_type (type): The type of the service class.
+            lookup_value (type | str): The type or the name of the service class.
         Returns:
             ServiceType: An instance of the service class.
         """
+        if isinstance(lookup_value, type):
+            return Container._get_by_type(lookup_value)
+        elif isinstance(lookup_value, str):
+            return Container._get_by_name(lookup_value)
+
+    @classmethod
+    def _get_by_type(cls, class_type: Type[ServiceType]) -> ServiceType:
+
         return cls._get_service_intern(class_type)
 
     @classmethod
-    def get_by_name(cls, class_name: str) -> ServiceType:
-        """Get an instance of a registered service by its class name.
-        Args:
-            class_name (str): The name of the service class.
-        Returns:
-            ServiceType: An instance of the service class.
-        """
+    def _get_by_name(cls, class_name: str) -> ServiceType:
         if not cls._registry.is_registered(class_name): raise ServiceNotFound(class_name)
 
         class_type = cls._registry.get_class_type(class_name)

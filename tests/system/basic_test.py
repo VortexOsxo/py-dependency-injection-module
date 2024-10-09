@@ -28,3 +28,11 @@ def test_basic_dependency_injection():
     s = Container.get(Service)
     assert isinstance(s, Service), "Container did not return the expected type."
     assert isinstance(s.dependency, Dependency), "Container did not give the proper dependency."
+
+def test_get_by_name():
+    @service()
+    class ServiceA:
+        pass
+
+    a = Container.get('ServiceA')
+    assert isinstance(a, ServiceA), "Should be able to get services by name."

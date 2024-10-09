@@ -47,11 +47,9 @@ def _get_injected_services(injected_kwargs):
     injected_services = {}
 
     for param_name, lookup_value in injected_kwargs.items():
-        if isinstance(lookup_value, type):
-            injected_services[param_name] = Container.get(lookup_value)
-        elif isinstance(lookup_value, str):
-            injected_services[param_name] = Container.get_by_name(lookup_value)
-        else:
+        if not isinstance(lookup_value, type) and not isinstance(lookup_value, str):
             raise InvalidLookUpValue('the service class name or type', lookup_value)
+        
+        injected_services[param_name] = Container.get(lookup_value)
     
     return injected_services
