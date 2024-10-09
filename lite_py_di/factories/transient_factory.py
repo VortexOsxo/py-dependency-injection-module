@@ -1,4 +1,3 @@
-from typing import Type
 from ._abstract_factory import _AbstractFactory, ServiceType
 from ..config import _RegisterConfig
 from ..errors import InvalidServiceConfiguration

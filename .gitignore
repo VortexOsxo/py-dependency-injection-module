@@ -7,3 +7,5 @@ build/
 # tests
 htmlcov/
 .coverage
+
+.idea/

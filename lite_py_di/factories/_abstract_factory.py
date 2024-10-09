@@ -1,6 +1,5 @@
-from typing import Type
+from typing import Type, TypeVar, Generic
 from abc import ABC, abstractmethod
-from typing import TypeVar, Generic
 from .._init_utils import _get_init_arguments
 from ..config import _RegisterConfig
 
