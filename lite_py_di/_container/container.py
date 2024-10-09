@@ -35,7 +35,7 @@ class Container(metaclass = SingletonMeta):
             ServiceType: An instance of the service class.
         """
         if not isinstance(lookup_value, (type, str)):
-            raise InvalidLookUpValue("lookup_value must be the class name or the class type", type(lookup_value))
+            raise InvalidLookUpValue("the service class name or type", type(lookup_value))
         class_name = lookup_value.__name__ if isinstance(lookup_value, type) else lookup_value
         return Container._get_service_intern(class_name)
     

@@ -1,5 +1,6 @@
 import pytest
 from lite_py_di import Container, service
+from lite_py_di.errors import UnregisteredService, ServiceAlreadyRegistered, InvalidLookUpValue
 
 @pytest.fixture(autouse=True)
 def reset_container():
@@ -36,3 +37,25 @@ def test_get_by_name():
 
     a = Container.get('ServiceA')
     assert isinstance(a, ServiceA), "Should be able to get services by name."
+
+def test_unregistered_service():
+    with pytest.raises(Exception) as error:
+        Container.get('ServiceA')
+    assert isinstance(error.value, UnregisteredService), "Should give proper error message when service is not found."
+
+def test_registering_service_twice():
+    with pytest.raises(Exception) as error:
+        @service()
+        class ServiceA:
+            pass
+
+        @service()
+        class ServiceA:
+            pass
+
+    assert isinstance(error.value, ServiceAlreadyRegistered), "Should give proper error message when service is already registered."
+
+def test_get_with_wrong_parameter():
+    with pytest.raises(Exception) as error:
+        Container.get(1)
+    assert isinstance(error.value, InvalidLookUpValue), "Should give proper error message when getting with a wrong lookup value."
