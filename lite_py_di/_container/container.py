@@ -2,13 +2,13 @@ from ..errors import UnregisteredService, InvalidLookUpValue, ServiceAlreadyRegi
 from .._singleton import SingletonMeta
 from ..config import ServiceConfig, _RegisterConfig
 from typing import Dict, Type, TypeVar
-from ..factories import _AbstractFactory, _get_factory_from_config
+from ..factories import AbstractFactory, _get_factory_from_config
 
 ServiceType = TypeVar('ServiceType')
 
 class Container(metaclass = SingletonMeta):
     """A container for managing service registration and retrieval."""
-    _factories: Dict[str, _AbstractFactory] = {}
+    _factories: Dict[str, AbstractFactory] = {}
 
     @classmethod
     def register(cls, class_type: Type[ServiceType], service_config: ServiceConfig):
@@ -22,6 +22,19 @@ class Container(metaclass = SingletonMeta):
 
         register_config = _RegisterConfig(service_config.is_singleton, service_config.is_loaded_eagerly, class_type)
         factory = _get_factory_from_config(register_config)
+
+        cls._factories[class_type.__name__] = factory
+        factory.on_registration(cls)
+
+    @classmethod
+    def register_factory(cls, class_type: Type[ServiceType], factory: AbstractFactory):
+        """Register a factory to create a type of service with the Container.
+        Args:
+            class_type (type): The type of the service class.
+            factory (AbstractFactory): Factory to create the service.
+        """
+        if class_type.__name__ in cls._factories:
+            raise ServiceAlreadyRegistered(class_type)
 
         cls._factories[class_type.__name__] = factory
         factory.on_registration(cls)

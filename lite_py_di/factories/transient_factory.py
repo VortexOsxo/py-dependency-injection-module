@@ -1,11 +1,8 @@
-from ._abstract_factory import _AbstractFactory, ServiceType
+from ._default_factory import _DefaultFactory, ServiceType
 from ..config import _RegisterConfig
 from ..errors import InvalidServiceConfiguration
 
-class TransientFactory(_AbstractFactory[ServiceType]):
-    def __init__(self, register_config: _RegisterConfig):
-        super().__init__(register_config)
-
+class TransientFactory(_DefaultFactory):
     def on_registration(self, container):
         if self.register_config.is_loaded_eagerly:
             raise InvalidServiceConfiguration("Service can't be transient and eagerly loaded at the same time")
