@@ -2,7 +2,7 @@ from ..errors import UnregisteredService, InvalidLookUpValue, ServiceAlreadyRegi
 from .._singleton import SingletonMeta
 from ..config import ServiceConfig, _RegisterConfig
 from typing import Dict, Type, TypeVar
-from ..factories import AbstractFactory, _get_factory_from_config
+from ..factories import AbstractFactory, _InstanceFactory, _get_factory_from_config
 
 ServiceType = TypeVar('ServiceType')
 
@@ -38,6 +38,15 @@ class Container(metaclass = SingletonMeta):
 
         cls._factories[class_type.__name__] = factory
         factory.on_registration(cls)
+
+    @classmethod
+    def register_instance(cls, class_type: Type[ServiceType], instance: ServiceType):
+        """Register an instance of a service to be used as a singleton.
+        Args:
+            class_type (type): The type of the service class.
+            instance (Service): The instance of the service.
+        """
+        cls.register_factory(class_type, _InstanceFactory(instance))
 
     @classmethod
     def get(cls, lookup_value: Type[ServiceType] | str) -> ServiceType:

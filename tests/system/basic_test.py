@@ -59,3 +59,13 @@ def test_get_with_wrong_parameter():
     with pytest.raises(Exception) as error:
         Container.get(1)
     assert isinstance(error.value, InvalidLookUpValue), "Should give proper error message when getting with a wrong lookup value."
+
+def test_register_instance():
+    class Service:
+        pass
+
+    service = Service()
+
+    Container.register_instance(Service, service)
+
+    assert Container.get(Service) is service, "Should be able to register an instance of a service."
