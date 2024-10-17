@@ -1,7 +1,6 @@
 from functools import wraps
 from inspect import signature
 from .container import Container
-from ..errors import InvalidLookUpValue
 
 def inject(**injected_kwargs):
     """

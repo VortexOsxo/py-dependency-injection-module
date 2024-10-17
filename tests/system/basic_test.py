@@ -1,5 +1,5 @@
 import pytest
-from lite_py_di import Container, service
+from lite_py_di import Container, service, accessor
 from lite_py_di.errors import UnregisteredService, ServiceAlreadyRegistered, InvalidLookUpValue
 
 @pytest.fixture(autouse=True)
@@ -69,3 +69,16 @@ def test_register_instance():
     Container.register_instance(Service, service)
 
     assert Container.get(Service) is service, "Should be able to register an instance of a service."
+
+def test_accessor():
+    @service()
+    class Service:
+        pass
+
+    @accessor
+    class Accessor:
+        def __init__(self, service: Service):
+            self.service = service
+
+    a = Accessor()
+    assert isinstance(a.service, Service), "Should be able to inject the service inside of the constructor."
