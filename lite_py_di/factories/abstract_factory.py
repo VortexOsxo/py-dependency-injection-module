@@ -7,6 +7,9 @@ class AbstractFactory(ABC, Generic[ServiceType]):
     def on_registration(self, container):        
         pass
 
+    def after_get(self, container):
+        pass
+    
     @abstractmethod
     def get_service(self, container) -> ServiceType:
         pass

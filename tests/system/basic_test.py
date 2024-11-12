@@ -1,6 +1,7 @@
 import pytest
 from lite_py_di import Container, service, accessor
 from lite_py_di.errors import UnregisteredService, ServiceAlreadyRegistered, InvalidLookUpValue
+from lite_py_di.factories import _InstanceFactory
 
 @pytest.fixture(autouse=True)
 def reset_container():
@@ -82,3 +83,32 @@ def test_accessor():
 
     a = Accessor()
     assert isinstance(a.service, Service), "Should be able to inject the service inside of the constructor."
+
+def test_replace_factory():
+    class Service:
+        pass
+
+    service1 = Service()
+    service2 = Service()
+
+    factory1 = _InstanceFactory(service1)
+    factory2 = _InstanceFactory(service2)
+
+    Container.register_factory(Service, factory1)
+    assert Container.get(Service) is service1, "Should be able to replace even if there is no factory registered yet."
+
+    Container.replace_factory(Service, factory2)
+    assert Container.get(Service) is service2, "Should be able to replace the factory."
+
+def test_temporary_instance():
+    @service()
+    class Service:
+        pass
+
+    instance1 = Container.get(Service)
+
+    instance2 = Service()
+    Container.register_temporary(Service, instance2)
+
+    assert Container.get(Service) is instance2, "Should be able to temporarily replace a factory with an instance."
+    assert Container.get(Service) is instance1, "Should be able to restore the previous factory."

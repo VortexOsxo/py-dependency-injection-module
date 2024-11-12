@@ -2,7 +2,7 @@ from ..errors import UnregisteredService, InvalidLookUpValue, ServiceAlreadyRegi
 from .._singleton import SingletonMeta
 from ..config import ServiceConfig, _RegisterConfig
 from typing import Dict, Type, TypeVar
-from ..factories import AbstractFactory, _InstanceFactory, _get_factory_from_config
+from ..factories import AbstractFactory, _InstanceFactory, _TemporaryFactory, _get_factory_from_config
 
 ServiceType = TypeVar('ServiceType')
 
@@ -40,6 +40,18 @@ class Container(metaclass = SingletonMeta):
         factory.on_registration(cls)
 
     @classmethod
+    def replace_factory(cls, class_type: Type[ServiceType], factory: AbstractFactory):
+        """Register or replace a factory to create a type of service with the Container.
+        Replace the previous factory, if there was one.
+
+        Args:
+            class_type (type): The type of the service class.
+            factory (AbstractFactory): Factory to create the service.
+        """
+        cls._factories[class_type.__name__] = factory
+        factory.on_registration(cls)
+    
+    @classmethod
     def register_instance(cls, class_type: Type[ServiceType], instance: ServiceType):
         """Register an instance of a service to be used as a singleton.
         Args:
@@ -47,6 +59,16 @@ class Container(metaclass = SingletonMeta):
             instance (Service): The instance of the service.
         """
         cls.register_factory(class_type, _InstanceFactory(instance))
+
+    @classmethod
+    def register_temporary(cls, class_type: Type[ServiceType], instance: ServiceType):
+        """Register an instance of a service to replace a factory for one use.
+        Args:
+            class_type (type): The type of the service class.
+            instance (Service): The instance of the service.
+        """
+        old_factory = cls._factories[class_type.__name__] if class_type.__name__ in cls._factories else None
+        cls.replace_factory(class_type, _TemporaryFactory(instance, class_type, old_factory))
 
     @classmethod
     def get(cls, lookup_value: Type[ServiceType] | str) -> ServiceType:
@@ -72,4 +94,6 @@ class Container(metaclass = SingletonMeta):
     @classmethod
     def _get_service_intern(cls, class_name: str) -> ServiceType:
         if class_name not in cls._factories: raise UnregisteredService(class_name)        
-        return cls._factories[class_name].get_service(cls)
+        service = cls._factories[class_name].get_service(cls)
+        cls._factories[class_name].after_get(cls)
+        return service
