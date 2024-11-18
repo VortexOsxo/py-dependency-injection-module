@@ -1,6 +1,6 @@
 from inspect import signature
 from functools import wraps
-from .._container.inject import _get_injected_services, _get_updated_signature
+from lite_py_di._container.inject import _get_injected_services, _get_updated_signature
 
 def accessor(cls):
     init_signature = signature(cls.__init__)
@@ -19,8 +19,6 @@ def accessor(cls):
     def new_init(self, *args, **kwargs):
         kwargs.update(_get_injected_services(injected_kwargs))
         old_init(self, *args, **kwargs)
-
-    print(new_sig)
 
     new_init.__signature__ = new_sig
     cls.__init__ = new_init
