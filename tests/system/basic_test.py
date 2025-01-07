@@ -112,3 +112,14 @@ def test_temporary_instance():
 
     assert Container.get(Service) is instance2, "Should be able to temporarily replace a factory with an instance."
     assert Container.get(Service) is instance1, "Should be able to restore the previous factory."
+
+def test_no_argument_service():
+    @service
+    class Service:
+        pass
+
+    s1 = Container.get(Service)
+    s2 = Container.get(Service)
+
+    assert s1 is s2, "Should be the same instance."
+    assert isinstance(s1, Service), "Should be able to register an instance of a service."

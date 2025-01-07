@@ -1,14 +1,16 @@
 from .._container.container import Container
 from ..config import ServiceConfig
 
-def service(service_config: ServiceConfig | None = None):
+def service(argument: ServiceConfig | type | None  = None):
     """Decorator for registering a class as a dependency in the Container.
     Args:
-        service_config (ServiceConfig | None, optional): Configuration for the service.
+        argument (ServiceConfig | type | None, optional): Can either be a configuration for the service, or the class itself to use the default configuration.
     """
+    if isinstance(argument, type):
+        Container().register(argument, ServiceConfig())
+        return argument
 
-    if service_config is None:
-        service_config = ServiceConfig()
+    service_config = ServiceConfig() if argument is None else argument
 
     def decorator(cls):
         Container().register(cls, service_config)
